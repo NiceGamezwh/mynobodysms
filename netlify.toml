@@ -9,6 +9,12 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+# 确保静态资源不被重定向
+[[redirects]]
+  from = "/_next/static/*"
+  to = "/.next/static/:splat"
+  status = 200
+
 # API 路由重定向配置
 [[redirects]]
   from = "/api/*"
@@ -26,13 +32,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
-
-# 默认回退到 Next.js 处理器
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/___netlify-handler"
-  status = 200
 
 [functions]
   node_bundler = "esbuild"
@@ -48,7 +47,7 @@
 [context.production.environment]
   NODE_ENV = "production"
 
-[kbcontext.deploy-preview.environment]
+[context.deploy-preview.environment]
   NODE_ENV = "production"
 
 [context.branch-deploy.environment]
