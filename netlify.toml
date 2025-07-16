@@ -1,23 +1,38 @@
 [build]
-  command = "pnpm build"
+  command = "npm run build"
   publish = ".next"
-  [build.environment]
-    NODE_VERSION = "20.17.0"
-    NEXT_BUILD_CONCURRENCY = "1"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NEXT_BUILD_CONCURRENCY = "1"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# 修复 Netlify 环境的 API 路由配置
+# API routes handling - Updated for Next.js 15
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/___netlify-handler"
   status = 200
 
+# Health check endpoint
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
+
+# Fallback for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
 [functions]
   node_bundler = "esbuild"
-  
-# 环境变量配置
+  timeout = 30
+  external_node_modules = ["sharp"]
+
+# Environment variables
 [context.production.environment]
   NODE_ENV = "production"
 

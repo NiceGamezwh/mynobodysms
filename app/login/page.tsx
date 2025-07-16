@@ -22,7 +22,7 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react"
-// import { AbortSignal } from "abortcontroller-polyfill"
+
 /**
  * Returns an AbortSignal that will automatically abort
  * after `ms` milliseconds.
@@ -52,17 +52,38 @@ export default function LoginPage() {
   const checkNetworkStatus = async () => {
     setNetworkStatus("checking")
     try {
-      // 简单的网络检查
-      const response = await fetch("/api/health", {
-        method: "GET",
-        signal: timeoutSignal(3000), // 3 s 超时
+      // 尝试多个健康检查端点
+      const healthEndpoints = ["/api/health", "/api/test", "/health"]
+
+      for (const endpoint of healthEndpoints) {
+        try {
+          const response = await fetch(endpoint, {
+            method: "GET",
+            signal: timeoutSignal(3000), // 3s 超时
+          })
+          if (response.ok) {
+            setNetworkStatus("online")
+            return
+          }
+        } catch (error) {
+          console.log(`Health check failed for ${endpoint}:`, error)
+          continue
+        }
+      }
+
+      // 如果所有健康检查都失败，尝试一个简单的请求
+      const response = await fetch("/", {
+        method: "HEAD",
+        signal: timeoutSignal(3000),
       })
+
       if (response.ok) {
         setNetworkStatus("online")
       } else {
         setNetworkStatus("offline")
       }
     } catch (error) {
+      console.log("Network check failed:", error)
       setNetworkStatus("offline")
     }
   }
@@ -236,7 +257,7 @@ export default function LoginPage() {
                   {networkStatus === "offline" && (
                     <div className="flex items-center space-x-1 text-red-600 text-xs">
                       <WifiOff className="h-3 w-3" />
-                      <span>网络连接异常</span>
+                      <span>API服务异常</span>
                       <Button variant="ghost" size="sm" onClick={checkNetworkStatus} className="h-4 px-1 text-xs">
                         重试
                       </Button>
@@ -254,6 +275,31 @@ export default function LoginPage() {
                 )}
               </CardHeader>
               <CardContent>
+                {/* Debug 链接 */}
+                {networkStatus === "offline" && (
+                  <Alert className="mb-4 border-orange-200 bg-orange-50/90">
+                    <AlertCircle className="h-4 w-4 text-orange-600" />
+                    <AlertDescription className="text-orange-800">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <strong>🔧 API 诊断</strong>
+                          <br />
+                          <span className="text-sm">点击按钮检查 API 连接状态</span>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open("/debug", "_blank")}
+                          className="ml-2 text-orange-700 border-orange-300 hover:bg-orange-100"
+                        >
+                          <ExternalLink className="h-3 w-3 mr-1" />
+                          诊断
+                        </Button>
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 {/* 企业微信客服 */}
                 <Alert className="mb-4 border-blue-200 bg-blue-50/90 animate-in fade-in-50 duration-300 backdrop-blur-sm">
                   <MessageCircle className="h-4 w-4 text-blue-600" />
@@ -303,7 +349,7 @@ export default function LoginPage() {
                       {canUseDemo
                         ? "真实API暂时无法连接，建议使用演示模式体验功能"
                         : networkStatus === "offline"
-                          ? "网络异常时建议使用演示模式"
+                          ? "API异常时建议使用演示模式"
                           : "可以先体验演示功能"}
                     </p>
                   </AlertDescription>

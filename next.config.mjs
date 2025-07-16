@@ -1,28 +1,28 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 生产环境优化配置
-  experimental: {
-    // 移除过时的 serverComponentsExternalPackages
-  },
-  // 确保 API 路由正常工作
-  output: 'standalone',
-  // 构建优化
+  // Remove standalone output for Netlify compatibility
+  // output: 'standalone', // This causes issues on Netlify
+  
+  // Netlify-specific configuration
+  trailingSlash: false,
+  
+  // Build optimizations
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
   },
-  // 图片优化
+  
+  // Image optimization - required for Netlify
   images: {
-    unoptimized: false,
-    domains: [],
+    unoptimized: true, // Required for static export compatibility
   },
-  // 压缩优化 - 移除过时的 swcMinify
+  
+  // Compression
   compress: true,
-  // 确保 API 路由在生产环境中正确工作
-  trailingSlash: false,
-  // 服务器部署配置
+  
+  // CORS headers for API routes
   async headers() {
     return [
       {
@@ -33,13 +33,22 @@ const nextConfig = {
           { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
         ],
       },
+      {
+        source: '/health',
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET, OPTIONS' },
+          { key: 'Access-Control-Allow-Headers', value: 'Content-Type' },
+        ],
+      },
     ]
   },
-  // 重写规则以处理API请求
+  
+  // Rewrites for health check
   async rewrites() {
     return [
       {
-        source: '/health',
+        source: '/health-check',
         destination: '/api/health',
       },
     ]
