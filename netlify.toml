@@ -1,0 +1,29 @@
+[build]
+  command = "pnpm build"
+  publish = ".next"
+  [build.environment]
+    NODE_VERSION = "20.17.0"
+    NEXT_BUILD_CONCURRENCY = "1"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# 修复 Netlify 环境的 API 路由配置
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
+
+[functions]
+  node_bundler = "esbuild"
+  timeout = 30
+  
+# 环境变量配置
+[context.production.environment]
+  NODE_ENV = "production"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "production"
+
+[context.branch-deploy.environment]
+  NODE_ENV = "production"

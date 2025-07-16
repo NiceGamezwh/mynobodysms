@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  nobodysms:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - nobodysms-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 可选：添加 Nginx 反向代理
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - nobodysms
+    networks:
+      - nobodysms-network
+    restart: unless-stopped
+
+networks:
+  nobodysms-network:
+    driver: bridge
+
+volumes:
+  logs:

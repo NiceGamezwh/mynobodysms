@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  nobodysms:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://api.sqhyw.net:90
+      - NEXT_PUBLIC_BACKUP_API_URL=https://api.nnanx.com:90
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - nobodysms-network
+
+networks:
+  nobodysms-network:
+    driver: bridge
