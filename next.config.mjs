@@ -1,17 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Netlify 部署配置
-  output: 'export',
+  // 移除 output: 'export' 以支持动态路由和 API 路由
   trailingSlash: true,
   images: {
-    unoptimized: true,
+    unoptimized: true, // 保留图片未优化配置，适用于静态导出或 Netlify
   },
-  
-  // 确保 API 路由正常工作
-  experimental: {
-    // 移除过时的配置
-  },
-  
+
   // 构建优化
   eslint: {
     ignoreDuringBuilds: true,
@@ -19,10 +13,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  
+
   // 压缩优化
   compress: true,
-  
+
   // 服务器部署配置
   async headers() {
     return [
@@ -44,7 +38,7 @@ const nextConfig = {
       },
     ]
   },
-  
+
   // 重写规则
   async rewrites() {
     return [
