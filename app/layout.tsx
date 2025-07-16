@@ -4,6 +4,8 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import { cookies } from "next/headers" // Import cookies
+import { SidebarProvider } from "@/components/ui/sidebar" // Import SidebarProvider
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -13,17 +15,25 @@ export const metadata: Metadata = {
     generator: 'v0.dev'
 }
 
-export default function RootLayout({
+export default async function RootLayout({
+  // Make it async to use cookies
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const cookieStore = cookies()
+  const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
+
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          {children}
-          <Toaster />
+          <SidebarProvider defaultOpen={defaultOpen}>
+            {" "}
+            {/* Wrap children with SidebarProvider */}
+            {children}
+            <Toaster />
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>
