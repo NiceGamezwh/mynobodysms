@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic"
-export const runtime = "nodejs"
+export const runtime = "nodejs" // 确保在 Netlify 上作为 Node.js 函数运行
 
 import { type NextRequest, NextResponse } from "next/server"
 import { isDemoMode, generateDemoResponse, makeFailoverRequest, API_ROUTES } from "@/lib/api-config"
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 添加 OPTIONS 支持
+// 添加 OPTIONS 支持，以处理预检请求
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
