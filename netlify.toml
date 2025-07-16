@@ -16,7 +16,6 @@
 
 [functions]
   node_bundler = "esbuild"
-  timeout = 30
   
 # 环境变量配置
 [context.production.environment]
