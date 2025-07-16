@@ -1,86 +1,48 @@
 export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
 
-import { NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
+import { getProxyTarget } from "@/lib/proxy-config"
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const testPath = searchParams.get("path") || "test"
+  const targetUrl = getProxyTarget(testPath, searchParams)
+
   try {
-    console.log("🧪 开始HTTPS连接测试...")
+    const response = await fetch(targetUrl, {
+      method: "GET",
+      headers: request.headers,
+      redirect: "follow",
+    })
 
-    const startTime = Date.now()
+    const headers = new Headers(response.headers)
+    headers.set("Access-Control-Allow-Origin", "*")
+    headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+    headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-    // 测试HTTPS连接到目标API
-    const testEndpoints = ["https://api.sqhyw.net:90", "https://api.nnanx.com:90"]
+    const responseBody = await response.text() // Get response as text
 
-    const results = []
-
-    for (const endpoint of testEndpoints) {
-      let testStart = Date.now()
-      try {
-        testStart = Date.now()
-        const response = await fetch(`${endpoint}/api/get_myinfo?token=test`, {
-          method: "GET",
-          headers: {
-            "User-Agent": "Mozilla/5.0 (compatible; NobodySMS-HTTPS-Test/1.0)",
-            Accept: "application/json",
-          },
-          signal: AbortSignal.timeout(10000),
-        })
-
-        const testDuration = Date.now() - testStart
-        const responseText = await response.text()
-
-        results.push({
-          endpoint,
-          status: response.status,
-          duration: testDuration,
-          success: response.status < 500, // 即使是401也算连接成功
-          response: responseText.substring(0, 100),
-          protocol: "HTTPS",
-        })
-
-        console.log(`✅ HTTPS端点 ${endpoint} 测试完成: ${response.status} (${testDuration}ms)`)
-      } catch (error) {
-        const testDuration = Date.now() - testStart
-        results.push({
-          endpoint,
-          status: 0,
-          duration: testDuration,
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-          protocol: "HTTPS",
-        })
-        console.error(`❌ HTTPS端点 ${endpoint} 测试失败:`, error)
-      }
-    }
-
-    const duration = Date.now() - startTime
-    const successfulConnections = results.filter((r) => r.success).length
-
-    return NextResponse.json({
-      success: successfulConnections > 0,
-      duration: duration,
-      results: results,
-      summary: {
-        total: testEndpoints.length,
-        successful: successfulConnections,
-        failed: testEndpoints.length - successfulConnections,
-      },
-      message:
-        successfulConnections > 0
-          ? `${successfulConnections}/${testEndpoints.length} 个HTTPS端点连接成功，耗时 ${duration}ms`
-          : `所有HTTPS端点连接失败，耗时 ${duration}ms`,
-      note: "当前使用HTTPS直连模式",
-      timestamp: new Date().toISOString(),
+    return new NextResponse(responseBody, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: headers,
     })
   } catch (error) {
-    console.error("🔥 HTTPS连接测试错误:", error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "未知错误",
-        timestamp: new Date().toISOString(),
-      },
-      { status: 500 },
-    )
+    console.error("Test proxy GET request failed:", error)
+    return NextResponse.json({ error: "Test proxy GET request failed" }, { status: 500 })
   }
+}
+
+export async function OPTIONS(request: NextRequest) {
+  const headers = new Headers(request.headers)
+  headers.set("Access-Control-Allow-Origin", "*")
+  headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+  "Access-Control-Allow-Headers", "Content-Type, Authorization"
+  headers.set("Access-Control-Max-Age", "86400") // Cache preflight for 24 hours
+
+  return new NextResponse(null, {
+    status: 200,
+    headers: headers,
+  })
 }

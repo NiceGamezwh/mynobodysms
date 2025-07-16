@@ -45,3 +45,15 @@ export async function fetchWithProxy(url: string, options: RequestInit = {}): Pr
   // 这个函数实际上不会在浏览器中被调用，只在服务器端使用
   throw new Error("fetchWithProxy should only be used on server side")
 }
+
+// 这是一个示例文件，用于配置代理目标。
+// 在实际应用中，这些URL可能来自环境变量或更复杂的配置。
+const PROXY_TARGET_BASE_URL = process.env.NEXT_PUBLIC_PROXY_TARGET_URL || "https://api.example.com/v1"
+
+export function getProxyTarget(path: string, searchParams: URLSearchParams): string {
+  // 根据 path 和 searchParams 构建完整的代理目标 URL
+  // 例如：如果 path 是 'users'，searchParams 包含 'id=123'
+  // 则返回 'https://api.example.com/v1/users?id=123'
+  const queryString = searchParams.toString()
+  return `${PROXY_TARGET_BASE_URL}/${path}${queryString ? `?${queryString}` : ""}`
+}

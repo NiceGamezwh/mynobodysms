@@ -21,6 +21,15 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# 停止 Docker 容器
+echo "Stopping nobody-sms-app container..."
+docker stop nobody-sms-app
+
+echo "Removing nobody-sms-app container..."
+docker rm nobody-sms-app
+
+echo "nobody-sms-app stopped and removed."
+
 # 从 PID 文件停止服务
 if [ -f "nobodysms.pid" ]; then
     PID=$(cat nobodysms.pid)

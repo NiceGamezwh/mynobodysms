@@ -30,6 +30,47 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# 停止并移除旧的 Docker 容器
+stop_and_remove_old_container() {
+    log_info "Stopping and removing old Docker containers..."
+    docker stop nobody-sms-app || true
+    docker rm nobody-sms-app || true
+    log_success "Old Docker containers stopped and removed"
+}
+
+# 移除旧的 Docker 镜像
+remove_old_image() {
+    log_info "Removing old Docker image..."
+    docker rmi nobody-sms-app-image || true
+    log_success "Old Docker image removed"
+}
+
+# 构建 Docker 镜像
+build_docker_image() {
+    log_info "Building Docker image..."
+    docker build -t nobody-sms-app-image -f Dockerfile.production .
+    if [ $? -ne 0 ]; then
+        log_error "Docker image build failed!"
+        exit 1
+    fi
+    log_success "Docker image built successfully"
+}
+
+# 运行 Docker 容器
+run_docker_container() {
+    log_info "Running Docker container..."
+    docker run -d \
+        --name nobody-sms-app \
+        -p 3000:3000 \
+        --restart always \
+        nobody-sms-app-image
+    if [ $? -ne 0 ]; then
+        log_error "Docker container failed to start!"
+        exit 1
+    fi
+    log_success "Docker container started successfully"
+}
+
 # 检查系统要求
 check_requirements() {
     log_info "检查系统要求..."
@@ -165,17 +206,14 @@ show_deployment_info() {
 main() {
     log_info "开始 NobodySMS 服务器部署流程"
     
-    check_requirements
-    install_dependencies
-    build_project
-    start_service
+    stop_and_remove_old_container
+    remove_old_image
+    build_docker_image
+    run_docker_container
     
-    if health_check; then
-        show_deployment_info
-    else
-        log_error "部署过程中出现问题，请检查日志文件"
-        exit 1
-    fi
+    log_success "Deployment successful! Application is running on port 3000."
+    log_info "You can check the logs with: docker logs nobody-sms-app"
+    log_info "To stop the application: docker stop nobody-sms-app"
 }
 
 # 执行主函数

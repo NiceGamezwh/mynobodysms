@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
 
 import { type NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
@@ -119,4 +120,29 @@ export async function GET(request: NextRequest) {
     console.error("🔥 Get mobile error:", error)
     return NextResponse.json({ error: "获取手机号失败" }, { status: 500 })
   }
+}
+
+export async function POST(request: Request) {
+  try {
+    const { project_id, operator, area_code } = await request.json()
+    if (!project_id) {
+      return NextResponse.json({ error: "Project ID is required" }, { status: 400 })
+    }
+    const data = await makeFailoverRequest(API_ROUTES.GET_MOBILE, { project_id, operator, area_code })
+    return NextResponse.json(data)
+  } catch (error) {
+    console.error("Error getting mobile:", error)
+    return NextResponse.json({ error: "Failed to get mobile" }, { status: 500 })
+  }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  })
 }

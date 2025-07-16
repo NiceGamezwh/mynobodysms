@@ -1,103 +1,44 @@
-"use client"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { MessageCircle, ShoppingBag, ExternalLink } from "lucide-react"
+import { ExternalLink, ShoppingBag } from "lucide-react"
 
-export function SocialMediaSection() {
+export function SocialMediaLinks() {
   return (
-    <Card className="nobody-card backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="flex items-center text-center justify-center">
-          <MessageCircle className="mr-2 h-5 w-5 text-yellow-600" />
-          官方社交媒体
-        </CardTitle>
-        <CardDescription className="text-center">关注我们获取最新动态和技术支持</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* WeChat */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="h-auto p-4 flex flex-col items-center space-y-2 hover:bg-green-50 border-green-200"
-              >
-                <MessageCircle className="h-6 w-6 text-green-600" />
-                <span className="font-medium">微信客服</span>
-                <Badge variant="secondary" className="text-xs">
-                  扫码添加
-                </Badge>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="flex items-center">
-                  <MessageCircle className="mr-2 h-5 w-5 text-green-600" />
-                  微信客服
-                </DialogTitle>
-                <DialogDescription>扫描二维码添加微信客服，获取技术支持</DialogDescription>
-              </DialogHeader>
-              <div className="flex justify-center p-4">
-                <img src="/wechat-qr.jpg" alt="微信二维码" className="w-64 h-64 object-contain" />
-              </div>
-            </DialogContent>
-          </Dialog>
+    <div className="mt-4 p-3 bg-gradient-to-r from-gray-50/90 to-blue-50/90 rounded-lg border border-gray-200 animate-in slide-in-from-bottom-4 duration-700 backdrop-blur-sm">
+      <div className="text-center mb-3">
+        <p className="text-xs text-gray-600 font-semibold mb-2">🔗 官方社交媒体</p>
+      </div>
 
-          {/* Xianyu */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="h-auto p-4 flex flex-col items-center space-y-2 hover:bg-orange-50 border-orange-200"
-              >
-                <ShoppingBag className="h-6 w-6 text-orange-600" />
-                <span className="font-medium">闲鱼店铺</span>
-                <Badge variant="secondary" className="text-xs">
-                  扫码关注
-                </Badge>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="flex items-center">
-                  <ShoppingBag className="mr-2 h-5 w-5 text-orange-600" />
-                  闲鱼官方店铺
-                </DialogTitle>
-                <DialogDescription>扫描二维码关注我们的闲鱼店铺</DialogDescription>
-              </DialogHeader>
-              <div className="flex justify-center p-4">
-                <img src="/xianyu-qr.jpg" alt="闲鱼二维码" className="w-64 h-64 object-contain" />
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        {/* Sponsor Section */}
-        <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
-          <div className="text-center">
-            <h3 className="text-sm font-semibold text-purple-700 mb-2">🎮 特别感谢赞助商</h3>
-            <a
-              href="https://polkadotgame.net/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium transition-colors"
-            >
-              Polkadot Game
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-            <p className="text-xs text-purple-500 mt-1">感谢赞助商对Nobody社区的大力支持</p>
+      <div className="grid grid-cols-2 gap-3">
+        <a
+          href="https://x.com/realnobodyxyz"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center p-3 bg-white/90 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/90 transition-all duration-300 hover:scale-105 hover:shadow-md backdrop-blur-sm"
+        >
+          <div className="w-8 h-8 mb-2 flex items-center justify-center">
+            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current text-black">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+          <span className="text-sm text-gray-700 font-medium">Nobody官方</span>
+          <span className="text-xs text-gray-500">@realnobodyxyz</span>
+        </a>
+
+        <a
+          href="https://m.tb.cn/h.hd3s5xz?tk=AkWbVFhrfq5"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center p-3 bg-white/90 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50/90 transition-all duration-300 hover:scale-105 hover:shadow-md backdrop-blur-sm"
+        >
+          <div className="w-8 h-8 mb-2 flex items-center justify-center">
+            <ShoppingBag className="w-6 h-6 text-orange-600" />
+          </div>
+          <span className="text-sm text-orange-700 font-medium">闲鱼官方</span>
+          <span className="text-xs text-gray-500 flex items-center">
+            Nobody店铺
+            <ExternalLink className="ml-1 h-3 w-3" />
+          </span>
+        </a>
+      </div>
+    </div>
   )
 }

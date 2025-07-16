@@ -1,8 +1,8 @@
 const https = require("https")
 const http = require("http")
 const { URL } = require("url")
+const fetch = require("node-fetch") // Netlify Functions 环境通常支持 node-fetch
 
-// API 配置 - 从环境变量获取
 const API_CONFIG = {
   endpoints: [process.env.NEXT_PUBLIC_API_URL, process.env.NEXT_PUBLIC_BACKUP_API_URL].filter(Boolean),
   routes: {

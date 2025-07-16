@@ -92,3 +92,6 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* This file can be used for global styles not managed by Tailwind or specific components. */
+/* For example, custom fonts, base resets, or specific utility classes. */

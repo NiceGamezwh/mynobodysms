@@ -77,3 +77,13 @@ export async function fetchWithServerProxy(url: string, options: RequestInit = {
     throw error
   }
 }
+
+// 这是一个示例文件，用于配置服务器端代理目标。
+// 在实际应用中，这些URL可能来自环境变量或更复杂的配置。
+const SERVER_PROXY_TARGET_BASE_URL = process.env.SERVER_PROXY_TARGET_URL || "http://localhost:8080/api"
+
+export function getServerProxyTarget(path: string, searchParams: URLSearchParams): string {
+  // 根据 path 和 searchParams 构建完整的代理目标 URL
+  const queryString = searchParams.toString()
+  return `${SERVER_PROXY_TARGET_BASE_URL}/${path}${queryString ? `?${queryString}` : ""}`
+}

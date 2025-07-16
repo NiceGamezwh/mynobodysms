@@ -1,21 +1,10 @@
 #!/bin/bash
 
-# 停止脚本
-echo "🛑 停止 NobodySMS 服务..."
-
-# 从 PID 文件读取进程 ID
-if [ -f .pid ]; then
-    PID=$(cat .pid)
-    if ps -p $PID > /dev/null; then
-        kill $PID
-        echo "✅ 服务已停止 (PID: $PID)"
-        rm .pid
-    else
-        echo "⚠️  进程 $PID 不存在"
-        rm .pid
-    fi
-else
-    echo "⚠️  未找到 PID 文件，尝试停止所有相关进程..."
-    pkill -f "next start"
-    echo "✅ 已尝试停止所有相关进程"
-fi
+# 停止 Next.js 应用 (如果通过 pnpm start 启动)
+echo "Stopping Next.js application..."
+# 查找并杀死 Next.js 进程
+# 注意：这可能需要根据实际情况调整，例如查找端口或进程名
+# pkill -f "next start"
+# 或者如果是在 Docker 中运行，则使用 Docker 命令停止
+echo "If running in Docker, use 'docker stop <container_name>'."
+echo "Otherwise, manually stop the process that started with 'pnpm start'."

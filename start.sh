@@ -18,7 +18,7 @@ export PORT=3000
 
 # 启动服务
 echo "🎯 启动服务在端口 $PORT..."
-npm start &
+pnpm start &
 
 # 保存进程 ID
 PID=$!

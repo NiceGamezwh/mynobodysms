@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 移除 output: 'export' 以支持动态路由和 API 路由
+  // 将 output 设置为 'standalone' 以支持 Next.js API 路由和 SSR
+  output: 'standalone',
   trailingSlash: true,
   images: {
     unoptimized: true, // 保留图片未优化配置，适用于静态导出或 Netlify

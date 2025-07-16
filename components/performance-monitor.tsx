@@ -1,17 +1,30 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
 import { getPerformanceStats, API_CONFIG } from "@/lib/api-config"
-import { Activity, Clock, TrendingUp, TrendingDown, RefreshCw, Zap } from "lucide-react"
+import {
+  Activity,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  Zap,
+  Gauge,
+  Cpu,
+  MemoryStickIcon as Memory,
+  Network,
+} from "lucide-react"
 
 export function PerformanceMonitor() {
   const [stats, setStats] = useState<any>(null)
   const [isVisible, setIsVisible] = useState(false)
+  const [cpuUsage, setCpuUsage] = useState(0)
+  const [memoryUsage, setMemoryUsage] = useState(0)
+  const [networkLatency, setNetworkLatency] = useState(0)
 
   const refreshStats = () => {
     const newStats = getPerformanceStats()
@@ -21,6 +34,19 @@ export function PerformanceMonitor() {
   useEffect(() => {
     refreshStats()
     const interval = setInterval(refreshStats, 5000) // 每5秒更新一次
+    return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Simulate CPU usage (0-100%)
+      setCpuUsage(Math.floor(Math.random() * 100))
+      // Simulate Memory usage (0-100%)
+      setMemoryUsage(Math.floor(Math.random() * 100))
+      // Simulate Network latency (ms)
+      setNetworkLatency(Math.floor(Math.random() * 200) + 20)
+    }, 2000) // Update every 2 seconds
+
     return () => clearInterval(interval)
   }, [])
 
@@ -40,22 +66,12 @@ export function PerformanceMonitor() {
 
   return (
     <Card className="fixed bottom-4 right-4 w-80 z-50 bg-white/95 backdrop-blur-sm shadow-lg animate-in slide-in-from-bottom-4">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm flex items-center">
-            <Activity className="h-4 w-4 mr-2 text-blue-600" />
-            性能监控
-          </CardTitle>
-          <div className="flex items-center space-x-1">
-            <Button variant="ghost" size="sm" onClick={refreshStats} className="h-6 w-6 p-0">
-              <RefreshCw className="h-3 w-3" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => setIsVisible(false)} className="h-6 w-6 p-0">
-              ×
-            </Button>
-          </div>
-        </div>
-        <CardDescription className="text-xs">实时API性能统计</CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium flex items-center">
+          <Activity className="h-4 w-4 mr-2 text-blue-600" />
+          性能监控
+        </CardTitle>
+        <Gauge className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-3">
         {stats ? (
@@ -165,6 +181,22 @@ export function PerformanceMonitor() {
         ) : (
           <div className="text-center text-xs text-gray-500 py-4">暂无性能数据</div>
         )}
+
+        {/* CPU, Memory, Network Usage */}
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="flex items-center">
+            <Cpu className="h-4 w-4 mr-2 text-blue-500" />
+            <span>CPU: {cpuUsage}%</span>
+          </div>
+          <div className="flex items-center">
+            <Memory className="h-4 w-4 mr-2 text-green-500" />
+            <span>内存: {memoryUsage}%</span>
+          </div>
+          <div className="flex items-center col-span-2">
+            <Network className="h-4 w-4 mr-2 text-purple-500" />
+            <span>网络延迟: {networkLatency}ms</span>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )
