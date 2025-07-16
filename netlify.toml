@@ -1,37 +1,42 @@
 [build]
-  command = "npm run build"
+  command = "pnpm build"
   publish = ".next"
-
-[build.environment]
-  NODE_VERSION = "18"
-  NEXT_BUILD_CONCURRENCY = "1"
+  [build.environment]
+    NODE_VERSION = "20.17.0"
+    NEXT_BUILD_CONCURRENCY = "1"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# API routes handling - Updated for Next.js 15
+# API 路由重定向配置
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/___netlify-handler"
   status = 200
 
-# Health check endpoint
+# 健康检查路由
 [[redirects]]
   from = "/health"
   to = "/.netlify/functions/___netlify-handler"
   status = 200
 
-# Fallback for client-side routing
+# SPA 回退
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  conditions = {Role = ["admin"]}
+
+# 默认回退到 Next.js 处理器
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["sharp"]
-
-# Environment variables
+  
+# 环境变量配置
 [context.production.environment]
   NODE_ENV = "production"
 
@@ -40,3 +45,11 @@
 
 [context.branch-deploy.environment]
   NODE_ENV = "production"
+
+# Headers 配置
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"

@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
 
 import { type NextRequest, NextResponse } from "next/server"
 import { isDemoMode, generateDemoResponse, makeFailoverRequest, API_ROUTES } from "@/lib/api-config"
@@ -128,4 +129,16 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     )
   }
+}
+
+// 添加 OPTIONS 支持
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  })
 }

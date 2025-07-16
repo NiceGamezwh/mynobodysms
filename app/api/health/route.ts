@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
 
 import { NextResponse } from "next/server"
 
@@ -10,7 +11,7 @@ export async function GET() {
       timestamp: new Date().toISOString(),
       version: "1.0.0",
       service: "NobodySMS",
-      environment: process.env.NODE_ENV || "development",
+      platform: "netlify",
     })
   } catch (error) {
     return NextResponse.json(
@@ -24,14 +25,14 @@ export async function GET() {
   }
 }
 
-// 支持 OPTIONS 请求
+// 添加 OPTIONS 支持
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
   })
 }

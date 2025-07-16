@@ -1,12 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove standalone output for Netlify compatibility
-  // output: 'standalone', // This causes issues on Netlify
+  // Netlify 部署配置
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
   
-  // Netlify-specific configuration
-  trailingSlash: false,
+  // 确保 API 路由正常工作
+  experimental: {
+    // 移除过时的配置
+  },
   
-  // Build optimizations
+  // 构建优化
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -14,15 +20,10 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   
-  // Image optimization - required for Netlify
-  images: {
-    unoptimized: true, // Required for static export compatibility
-  },
-  
-  // Compression
+  // 压缩优化
   compress: true,
   
-  // CORS headers for API routes
+  // 服务器部署配置
   async headers() {
     return [
       {
@@ -44,11 +45,11 @@ const nextConfig = {
     ]
   },
   
-  // Rewrites for health check
+  // 重写规则
   async rewrites() {
     return [
       {
-        source: '/health-check',
+        source: '/health',
         destination: '/api/health',
       },
     ]
