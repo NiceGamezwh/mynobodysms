@@ -21,6 +21,13 @@
   to = "/.netlify/functions/___netlify-handler"
   status = 200
 
+# SPA 回退规则，确保客户端导航正常
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = true
+
 # 默认回退到 Next.js 处理器
 [[redirects]]
   from = "/*"
@@ -41,7 +48,7 @@
 [context.production.environment]
   NODE_ENV = "production"
 
-[context.deploy-preview.environment]
+[kbcontext.deploy-preview.environment]
   NODE_ENV = "production"
 
 [context.branch-deploy.environment]
